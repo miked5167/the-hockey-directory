@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { QueryProvider } from '@/components/providers/QueryProvider'
-import { Header } from '@/components/layout/Header'
+import { Navigation } from '@/components/hockey/navigation'
 import { Footer } from '@/components/layout/Footer'
 import '@/styles/globals.css'
+import '@/styles/design-tokens.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,7 +31,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryProvider>
           <div className="min-h-screen flex flex-col">
-            <Header />
+            <Navigation />
             <main className="flex-1">
               {children}
             </main>

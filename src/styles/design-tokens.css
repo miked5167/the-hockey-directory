@@ -1,0 +1,375 @@
+/**
+ * Hockey Directory - Design Tokens
+ * 
+ * Based on UI inspiration analysis:
+ * - Professional blue theme from 3PL directory examples
+ * - Hockey rink ice blue aesthetic
+ * - Trust-building color psychology
+ * - Mobile-first responsive design
+ */
+
+:root {
+  /* ================================== 
+     COLOR SYSTEM - Hockey Professional
+  ================================== */
+  
+  /* Primary Colors - Hockey Ice Blue */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;  /* Main brand color */
+  --color-primary-600: #0284c7;  /* CTA buttons */
+  --color-primary-700: #0369a1;  /* Hover states */
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
+
+  /* Secondary Colors - Hockey Red */
+  --color-secondary-50: #fef2f2;
+  --color-secondary-100: #fee2e2;
+  --color-secondary-200: #fecaca;
+  --color-secondary-300: #fca5a5;
+  --color-secondary-400: #f87171;
+  --color-secondary-500: #ef4444;
+  --color-secondary-600: #dc2626;  /* Hockey red accent */
+  --color-secondary-700: #b91c1c;
+  --color-secondary-800: #991b1b;
+  --color-secondary-900: #7f1d1d;
+
+  /* Success Colors - Verification Green */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;  /* Verified badges */
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+
+  /* Warning Colors - Featured Gold */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;  /* Featured tier */
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  /* Premium Colors - Royal Purple */
+  --color-premium-50: #faf5ff;
+  --color-premium-100: #f3e8ff;
+  --color-premium-200: #e9d5ff;
+  --color-premium-300: #d8b4fe;
+  --color-premium-400: #c084fc;
+  --color-premium-500: #a855f7;
+  --color-premium-600: #9333ea;  /* Premium tier */
+  --color-premium-700: #7c3aed;
+  --color-premium-800: #6b21a8;
+  --color-premium-900: #581c87;
+
+  /* Neutral Colors - Clean Grays */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+  --color-neutral-950: #030712;
+
+  /* ================================== 
+     TYPOGRAPHY SYSTEM - Athletic Professional
+  ================================== */
+  
+  /* Font Families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Font Sizes - Mobile First */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+  --text-6xl: 3.75rem;     /* 60px */
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+
+  /* ================================== 
+     SPACING SYSTEM - 8pt Grid
+  ================================== */
+  
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;   /* 2px */
+  --space-1: 0.25rem;      /* 4px */
+  --space-1-5: 0.375rem;   /* 6px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-2-5: 0.625rem;   /* 10px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-3-5: 0.875rem;   /* 14px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-7: 1.75rem;      /* 28px */
+  --space-8: 2rem;         /* 32px */
+  --space-9: 2.25rem;      /* 36px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-11: 2.75rem;     /* 44px */
+  --space-12: 3rem;        /* 48px */
+  --space-14: 3.5rem;      /* 56px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-28: 7rem;        /* 112px */
+  --space-32: 8rem;        /* 128px */
+  --space-36: 9rem;        /* 144px */
+  --space-40: 10rem;       /* 160px */
+  --space-44: 11rem;       /* 176px */
+  --space-48: 12rem;       /* 192px */
+  --space-52: 13rem;       /* 208px */
+  --space-56: 14rem;       /* 224px */
+  --space-60: 15rem;       /* 240px */
+  --space-64: 16rem;       /* 256px */
+  --space-72: 18rem;       /* 288px */
+  --space-80: 20rem;       /* 320px */
+  --space-96: 24rem;       /* 384px */
+
+  /* ================================== 
+     BREAKPOINTS - Mobile First
+  ================================== */
+  
+  --breakpoint-sm: 640px;    /* Tablet */
+  --breakpoint-md: 768px;    /* Small Desktop */
+  --breakpoint-lg: 1024px;   /* Desktop */
+  --breakpoint-xl: 1280px;   /* Large Desktop */
+  --breakpoint-2xl: 1536px;  /* Ultra Wide */
+
+  /* ================================== 
+     SHADOWS & ELEVATION
+  ================================== */
+  
+  /* Shadow System - Professional Depth */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-base: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-2xl: 0 50px 100px -20px rgb(0 0 0 / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* Colored Shadows for Premium Elements */
+  --shadow-primary: 0 10px 15px -3px rgb(14 165 233 / 0.1), 0 4px 6px -4px rgb(14 165 233 / 0.1);
+  --shadow-premium: 0 10px 15px -3px rgb(147 51 234 / 0.1), 0 4px 6px -4px rgb(147 51 234 / 0.1);
+
+  /* ================================== 
+     BORDER RADIUS
+  ================================== */
+  
+  --radius-none: 0px;
+  --radius-sm: 0.125rem;     /* 2px */
+  --radius-base: 0.25rem;    /* 4px */
+  --radius-md: 0.375rem;     /* 6px */
+  --radius-lg: 0.5rem;       /* 8px */
+  --radius-xl: 0.75rem;      /* 12px */
+  --radius-2xl: 1rem;        /* 16px */
+  --radius-3xl: 1.5rem;      /* 24px */
+  --radius-full: 9999px;
+
+  /* ================================== 
+     TRANSITIONS & ANIMATIONS
+  ================================== */
+  
+  /* Duration */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Timing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Common Transitions */
+  --transition-colors: color var(--duration-150) var(--ease-in-out),
+                      background-color var(--duration-150) var(--ease-in-out),
+                      border-color var(--duration-150) var(--ease-in-out);
+  --transition-opacity: opacity var(--duration-150) var(--ease-in-out);
+  --transition-shadow: box-shadow var(--duration-150) var(--ease-in-out);
+  --transition-transform: transform var(--duration-150) var(--ease-in-out);
+  --transition-all: all var(--duration-150) var(--ease-in-out);
+
+  /* ================================== 
+     Z-INDEX SCALE
+  ================================== */
+  
+  --z-auto: auto;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;      /* Modals, Dropdowns */
+  --z-60: 60;      /* Navigation */
+  --z-70: 70;      /* Sticky Elements */
+  --z-80: 80;      /* Overlays */
+  --z-90: 90;      /* Loading States */
+  --z-100: 100;    /* Notifications */
+
+  /* ================================== 
+     SEMANTIC COLOR MAPPINGS
+  ================================== */
+  
+  /* Background Colors */
+  --bg-primary: var(--color-neutral-0);
+  --bg-secondary: var(--color-neutral-50);
+  --bg-muted: var(--color-neutral-100);
+  --bg-accent: var(--color-primary-50);
+
+  /* Text Colors */
+  --text-primary: var(--color-neutral-900);
+  --text-secondary: var(--color-neutral-600);
+  --text-muted: var(--color-neutral-500);
+  --text-inverse: var(--color-neutral-0);
+
+  /* Border Colors */
+  --border-primary: var(--color-neutral-200);
+  --border-secondary: var(--color-neutral-300);
+  --border-accent: var(--color-primary-300);
+
+  /* Interactive Colors */
+  --interactive-primary: var(--color-primary-600);
+  --interactive-primary-hover: var(--color-primary-700);
+  --interactive-secondary: var(--color-neutral-600);
+  --interactive-secondary-hover: var(--color-neutral-700);
+
+  /* Status Colors */
+  --status-success: var(--color-success-600);
+  --status-warning: var(--color-warning-600);
+  --status-error: var(--color-secondary-600);
+  --status-info: var(--color-primary-600);
+
+  /* ================================== 
+     COMPONENT SPECIFIC TOKENS
+  ================================== */
+  
+  /* Button Heights */
+  --button-height-sm: 2rem;      /* 32px */
+  --button-height-md: 2.5rem;    /* 40px */
+  --button-height-lg: 3rem;      /* 48px */
+  --button-height-xl: 3.5rem;    /* 56px */
+
+  /* Card Styling */
+  --card-padding: var(--space-6);
+  --card-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-base);
+  --card-shadow-hover: var(--shadow-lg);
+
+  /* Input Styling */
+  --input-height: var(--space-10);
+  --input-padding-x: var(--space-3);
+  --input-radius: var(--radius-md);
+  --input-border: var(--border-primary);
+  --input-focus: var(--color-primary-500);
+
+  /* Navigation */
+  --nav-height: 4rem;            /* 64px */
+  --nav-height-mobile: 3.5rem;   /* 56px */
+  --nav-padding-x: var(--space-6);
+  --nav-shadow: var(--shadow-sm);
+}
+
+/* ================================== 
+   RESPONSIVE DESIGN TOKENS
+================================== */
+
+@media (min-width: 640px) {
+  :root {
+    /* Larger text on tablets+ */
+    --text-base: 1.125rem;   /* 18px */
+    --text-lg: 1.25rem;      /* 20px */
+    --text-xl: 1.5rem;       /* 24px */
+    --text-2xl: 1.875rem;    /* 30px */
+    --text-3xl: 2.25rem;     /* 36px */
+    --text-4xl: 3rem;        /* 48px */
+    --text-5xl: 4rem;        /* 64px */
+    --text-6xl: 5rem;        /* 80px */
+
+    /* Larger spacing on bigger screens */
+    --nav-padding-x: var(--space-8);
+    --card-padding: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    /* Desktop optimizations */
+    --nav-height: 5rem;      /* 80px */
+    --card-padding: var(--space-10);
+  }
+}
+
+/* ================================== 
+   UTILITY CLASSES
+================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}

@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAdvisors } from '@/hooks/use-advisors'
-import { AdvisorCard } from '@/components/ui/AdvisorCard'
+import { AdvisorCard } from '@/components/hockey/advisor-card'
+import { Grid } from '@/components/hockey/grid'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ContactAdvisorModal } from './ContactAdvisorModal'
@@ -10,10 +12,19 @@ import { Search, Filter, SortAsc } from 'lucide-react'
 import type { AdvisorWithSubscriptionPlan } from '@/lib/business/featured-listings'
 
 export function AdvisorDirectory() {
+  const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAdvisor, setSelectedAdvisor] = useState<AdvisorWithSubscriptionPlan | null>(null)
   const [sortBy, setSortBy] = useState<'priority' | 'rating' | 'name' | 'experience'>('priority')
   const [showFilters, setShowFilters] = useState(false)
+
+  // Set search query from URL parameters on component mount
+  useEffect(() => {
+    const searchParam = searchParams.get('search')
+    if (searchParam) {
+      setSearchQuery(searchParam)
+    }
+  }, [searchParams])
 
   const { data: advisors = [], isLoading, error } = useAdvisors({
     verified: true
@@ -172,15 +183,32 @@ export function AdvisorDirectory() {
           )}
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {sortedAdvisors.map((advisor) => (
-            <AdvisorCard
-              key={advisor.id}
-              advisor={advisor}
-              onContact={() => handleContactAdvisor(advisor)}
-            />
-          ))}
-        </div>
+        <Grid cols={{ mobile: 1, tablet: 2, desktop: 3 }} gap="lg">
+          {sortedAdvisors.map((advisor, index) => {
+            // Determine card layout based on subscription and position
+            let layout: "premium" | "featured" | "basic" = "basic"
+            
+            if (advisor.subscription?.plan.name === "Premium") {
+              layout = "premium"
+            } else if (advisor.subscription?.plan.name === "Featured" || index < 3) {
+              layout = "featured"
+            }
+
+            return (
+              <AdvisorCard
+                key={advisor.id}
+                advisor={{
+                  ...advisor,
+                  fullName: advisor.name,
+                  headshotUrl: advisor.headshotUrl || "/placeholder-avatar.jpg",
+                  completeness: 90, // Mock completeness
+                  responseTimeMs: 3600000, // 1 hour mock
+                }}
+                layout={layout}
+              />
+            )
+          })}
+        </Grid>
       )}
 
       {/* Contact Modal */}
