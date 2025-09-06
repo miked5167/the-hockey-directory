@@ -1,12 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { MapPin, Star, Award, Filter } from 'lucide-react'
+import { MapPin, Star, Award, Filter, X } from 'lucide-react'
+
+export interface FilterState {
+  location: string
+  selectedSpecialties: string[]
+  selectedCertifications: string[]
+  minRating: number
+  minExperience: number
+  verifiedOnly: boolean
+  featuredOnly: boolean
+}
+
+interface AdvisorFiltersProps {
+  onFiltersChange?: (filters: FilterState) => void
+  initialFilters?: FilterState
+  className?: string
+}
 
 const POPULAR_LOCATIONS = [
   'Boston, MA',
@@ -41,7 +57,7 @@ const CERTIFICATIONS = [
   'Strength & Conditioning'
 ]
 
-export function AdvisorFilters() {
+export function AdvisorFilters({ onFiltersChange, className }: AdvisorFiltersProps) {
   const [location, setLocation] = useState('')
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([])
   const [selectedCertifications, setSelectedCertifications] = useState<string[]>([])
@@ -49,6 +65,22 @@ export function AdvisorFilters() {
   const [minExperience, setMinExperience] = useState(0)
   const [verifiedOnly, setVerifiedOnly] = useState(true)
   const [featuredOnly, setFeaturedOnly] = useState(false)
+
+  // Create filter state object
+  const filterState: FilterState = {
+    location,
+    selectedSpecialties,
+    selectedCertifications,
+    minRating,
+    minExperience,
+    verifiedOnly,
+    featuredOnly
+  }
+
+  // Notify parent component of filter changes
+  useEffect(() => {
+    onFiltersChange?.(filterState)
+  }, [location, selectedSpecialties, selectedCertifications, minRating, minExperience, verifiedOnly, featuredOnly])
 
   const handleSpecialtyToggle = (specialty: string) => {
     setSelectedSpecialties(prev => 
@@ -85,20 +117,26 @@ export function AdvisorFilters() {
     (featuredOnly ? 1 : 0)
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
+            <Filter className="h-5 w-5 mr-2 text-blue-600" />
             Filters
             {activeFilterCount > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-700">
                 {activeFilterCount}
               </Badge>
             )}
           </CardTitle>
           {activeFilterCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={clearAllFilters}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearAllFilters}
+              className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <X className="h-4 w-4 mr-1" />
               Clear All
             </Button>
           )}
@@ -108,67 +146,105 @@ export function AdvisorFilters() {
       <CardContent className="space-y-6">
         {/* Location */}
         <div>
-          <label className="flex items-center text-sm font-medium mb-3">
-            <MapPin className="h-4 w-4 mr-2" />
+          <label className="flex items-center text-sm font-medium mb-3 text-gray-700">
+            <MapPin className="h-4 w-4 mr-2 text-blue-600" />
             Location
           </label>
           <Input
-            placeholder="Enter city or state..."
+            placeholder="Enter city, province, or state..."
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="mb-2"
+            className="mb-3"
           />
-          <div className="flex flex-wrap gap-1">
-            {POPULAR_LOCATIONS.map(loc => (
-              <Button
-                key={loc}
-                variant={location === loc ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLocation(location === loc ? '' : loc)}
-                className="text-xs"
-              >
-                {loc}
-              </Button>
-            ))}
+          <div className="space-y-2">
+            <p className="text-xs text-gray-500 mb-2">Popular locations:</p>
+            <div className="flex flex-wrap gap-2">
+              {POPULAR_LOCATIONS.map(loc => (
+                <Button
+                  key={loc}
+                  variant={location === loc ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLocation(location === loc ? '' : loc)}
+                  className={`text-xs transition-all ${
+                    location === loc 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'hover:bg-blue-50 hover:border-blue-300'
+                  }`}
+                >
+                  {loc}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Rating */}
         <div>
-          <label className="flex items-center text-sm font-medium mb-3">
-            <Star className="h-4 w-4 mr-2" />
+          <label className="flex items-center text-sm font-medium mb-3 text-gray-700">
+            <Star className="h-4 w-4 mr-2 text-blue-600" />
             Minimum Rating
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {[4.0, 4.5, 4.8].map(rating => (
               <Button
                 key={rating}
                 variant={minRating === rating ? "default" : "outline"}
                 size="sm"
                 onClick={() => setMinRating(minRating === rating ? 0 : rating)}
+                className={`transition-all ${
+                  minRating === rating 
+                    ? 'bg-amber-500 text-white hover:bg-amber-600' 
+                    : 'hover:bg-amber-50 hover:border-amber-300'
+                }`}
               >
                 {rating}+ ⭐
               </Button>
             ))}
+            {minRating > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMinRating(0)}
+                className="text-gray-400 hover:text-red-600"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Experience */}
         <div>
-          <label className="text-sm font-medium mb-3 block">
+          <label className="flex items-center text-sm font-medium mb-3 text-gray-700">
+            <Award className="h-4 w-4 mr-2 text-blue-600" />
             Minimum Experience
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {[5, 10, 15, 20].map(years => (
               <Button
                 key={years}
                 variant={minExperience === years ? "default" : "outline"}
                 size="sm"
                 onClick={() => setMinExperience(minExperience === years ? 0 : years)}
+                className={`transition-all ${
+                  minExperience === years 
+                    ? 'bg-green-600 text-white hover:bg-green-700' 
+                    : 'hover:bg-green-50 hover:border-green-300'
+                }`}
               >
                 {years}+ years
               </Button>
             ))}
+            {minExperience > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMinExperience(0)}
+                className="text-gray-400 hover:text-red-600"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         </div>
 

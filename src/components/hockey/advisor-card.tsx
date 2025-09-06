@@ -2,7 +2,11 @@ import Image from "next/image"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { VerificationBadge, PremiumBadge, FeaturedBadge } from "@/components/ui/badge"
+import { HighlightMatches } from "@/lib/search-highlight"
 import { cn } from "@/lib/utils"
+import { Heart, GitCompare } from "lucide-react"
+import { useFavorites } from "@/hooks/use-favorites"
+import { useAdvisorComparison } from "@/hooks/use-advisor-comparison"
 import type { Advisor } from "@prisma/client"
 
 interface AdvisorCardProps {
@@ -12,6 +16,7 @@ interface AdvisorCardProps {
   }
   layout: "premium" | "featured" | "basic"
   className?: string
+  searchQuery?: string
 }
 
 const StarRating = ({ rating, count }: { rating: number; count?: number }) => (
@@ -36,13 +41,39 @@ const StarRating = ({ rating, count }: { rating: number; count?: number }) => (
   </div>
 )
 
-export function AdvisorCard({ advisor, layout, className }: AdvisorCardProps) {
+export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: AdvisorCardProps) {
   const isPremium = layout === "premium"
   const isFeatured = layout === "featured"
+  const { isFavorited, toggleFavorite } = useFavorites()
+  const { toggleComparison, isInComparison } = useAdvisorComparison()
   
   const averageRating = advisor.reviews?.length 
     ? advisor.reviews.reduce((acc, r) => acc + r.rating, 0) / advisor.reviews.length
     : 0
+
+  const isAdvisorFavorited = isFavorited(advisor.id)
+  const isAdvisorInComparison = isInComparison(advisor.id)
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    toggleFavorite({
+      id: advisor.id,
+      name: advisor.fullName,
+      location: `${advisor.city}, ${advisor.province}`,
+      specialties: advisor.specialties || '',
+      rating: averageRating,
+      headshotUrl: advisor.headshotUrl
+    })
+  }
+
+  const handleToggleComparison = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Convert advisor to AdvisorWithSubscriptionPlan format
+    toggleComparison({
+      ...advisor,
+      subscription: null // Will be populated from actual data
+    })
+  }
 
   const cardClasses = cn(
     "group relative overflow-hidden transition-all duration-300",
@@ -64,15 +95,54 @@ export function AdvisorCard({ advisor, layout, className }: AdvisorCardProps) {
     <Card className={cardClasses}>
       {/* Premium/Featured indicator ribbon */}
       {isPremium && (
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-20 z-10">
           <PremiumBadge />
         </div>
       )}
       {isFeatured && !isPremium && (
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-20 z-10">
           <FeaturedBadge />
         </div>
       )}
+
+      {/* Action buttons in top-right */}
+      <div className="absolute top-2 right-2 z-10 flex gap-1">
+        {/* Compare button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleToggleComparison}
+          className={cn(
+            "h-8 w-8 p-0 rounded-full transition-all duration-200 hover:scale-110",
+            isAdvisorInComparison 
+              ? "text-blue-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200" 
+              : "text-gray-400 hover:text-blue-500 bg-white/80 hover:bg-blue-50 border border-gray-200 hover:border-blue-200"
+          )}
+        >
+          <GitCompare className={cn(
+            "h-4 w-4 transition-all duration-200",
+            isAdvisorInComparison && "fill-current"
+          )} />
+        </Button>
+
+        {/* Favorite button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleToggleFavorite}
+          className={cn(
+            "h-8 w-8 p-0 rounded-full transition-all duration-200 hover:scale-110",
+            isAdvisorFavorited 
+              ? "text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100 border border-red-200" 
+              : "text-gray-400 hover:text-red-500 bg-white/80 hover:bg-red-50 border border-gray-200 hover:border-red-200"
+          )}
+        >
+          <Heart className={cn(
+            "h-4 w-4 transition-all duration-200",
+            isAdvisorFavorited && "fill-current"
+          )} />
+        </Button>
+      </div>
 
       <CardHeader className="pb-3">
         <div className="flex items-start gap-4">
@@ -99,7 +169,7 @@ export function AdvisorCard({ advisor, layout, className }: AdvisorCardProps) {
               isPremium ? "text-purple-900" : isFeatured ? "text-amber-900" : "text-gray-900",
               "text-lg leading-6"
             )}>
-              {advisor.fullName}
+              <HighlightMatches text={advisor.fullName} searchQuery={searchQuery} />
             </h3>
             
             {averageRating > 0 && (
@@ -110,7 +180,7 @@ export function AdvisorCard({ advisor, layout, className }: AdvisorCardProps) {
             )}
 
             <p className="text-sm text-muted-foreground mt-1">
-              {advisor.city}, {advisor.province}
+              <HighlightMatches text={`${advisor.city}, ${advisor.province}`} searchQuery={searchQuery} />
             </p>
           </div>
         </div>

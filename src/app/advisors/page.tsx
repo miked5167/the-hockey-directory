@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
-import { AdvisorDirectory } from './components/AdvisorDirectory'
-import { AdvisorFilters } from './components/AdvisorFilters'
+import { AdvisorBrowser } from './components/AdvisorBrowser'
 import { Card, CardContent } from '@/components/ui/card'
 import { Users, Star, Crown, Sparkles } from 'lucide-react'
 
@@ -83,19 +82,12 @@ export default function AdvisorsPage() {
 
       {/* Directory Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <Suspense fallback={<div>Loading filters...</div>}>
-                <AdvisorFilters />
-              </Suspense>
+        <Suspense fallback={
+          <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+            <div className="lg:col-span-1">
+              <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
             </div>
-          </div>
-
-          {/* Main Directory */}
-          <div className="mt-8 lg:mt-0 lg:col-span-3">
-            <Suspense fallback={
+            <div className="lg:col-span-3">
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i} className="animate-pulse">
@@ -111,11 +103,11 @@ export default function AdvisorsPage() {
                   </Card>
                 ))}
               </div>
-            }>
-              <AdvisorDirectory />
-            </Suspense>
+            </div>
           </div>
-        </div>
+        }>
+          <AdvisorBrowser />
+        </Suspense>
       </section>
     </div>
   )
