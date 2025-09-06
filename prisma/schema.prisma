@@ -14,18 +14,28 @@ datasource db {
 
 model Advisor {
   id              String   @id @default(cuid())
+  slug            String   @unique // SEO-friendly URL slug
   name            String
+  headshot        String?  // Profile photo URL
+  city            String
+  province        String
+  country         String
+  bio             String?
+  website         String?
+  socials         String?  // JSON string: {linkedin, twitter, instagram}
+  specialties     String?  // JSON string of specialties array
+  levels          String?  // JSON string: ['youth', 'junior', 'college', 'pro']
+  verified        Boolean  @default(false)
+  featuredUntil   DateTime? // When featured status expires
+  completeness    Int      @default(0) // Profile completeness score 0-100
+  responseTimeMs  Int?     // Average response time in milliseconds
   email           String   @unique
   phone           String?
-  bio             String?
-  specialties     String? // JSON string of specialties array
   yearsExperience Int?
-  certifications  String? // JSON string of certifications array
-  location        String
-  website         String?
-  linkedIn        String?
-  imageUrl        String?
-  verified        Boolean  @default(false)
+  certifications  String?  // JSON string of certifications array
+  location        String   // Full location for backward compatibility
+  linkedIn        String?  // Deprecated - use socials
+  imageUrl        String?  // Deprecated - use headshot
   rating          Float?   @default(0)
   reviewCount     Int      @default(0)
   createdAt       DateTime @default(now())
@@ -33,9 +43,11 @@ model Advisor {
 
   // Business relationships
   subscription AdvisorSubscription?
+  entitlements Entitlement[]
   leads        Lead[]
   payments     Payment[]
   reviews      Review[]
+  events       Event[]
 
   @@map("advisors")
 }
@@ -167,16 +179,14 @@ model AdvisorSubscription {
 model Lead {
   id          String   @id @default(cuid())
   advisorId   String
-  parentName  String
   parentEmail String
   parentPhone String?
-  playerName  String?
+  parentName  String
   playerAge   Int?
-  location    String?
-  message     String?
+  message     String
+  status      String   @default("new") // new, contacted, qualified, won, lost
   source      String   @default("website") // website, referral, etc.
-  status      String   @default("new") // new, contacted, qualified, converted, closed
-  leadValue   Float?   // Estimated value of the lead
+  leadValue   Float?   // Estimated value of the lead for commission calculation
   conversionDate DateTime?
   notes       String?
   createdAt   DateTime @default(now())
@@ -210,19 +220,106 @@ model Payment {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  advisorId String
-  parentName String
-  rating    Int      // 1-5 stars
-  title     String?
-  comment   String?
-  verified  Boolean  @default(false)
-  helpful   Int      @default(0) // Helpful votes
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  advisorId  String
+  rating     Int      // 1-5 stars
+  title      String
+  body       String
+  authorName String
+  status     String   @default("pending") // pending, approved, rejected
+  adminNotes String?  // Moderation notes
+  helpful    Int      @default(0) // Helpful votes
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relationships
   advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
 
-  @@map("reviews_ratings")
+  @@map("reviews")
+}
+
+// New models from development standards
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  role      String    // admin, advisor, parent
+  advisorId String?   // Links to advisor profile if role is advisor
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relationships
+  events           Event[]
+  moderationQueue  ModerationQueue[]
+
+  @@map("users")
+}
+
+model Plan {
+  id            String  @id @default(cuid())
+  name          String  @unique // basic, featured, premium
+  priceMonth    Int     // Price in cents
+  priceYear     Int     // Price in cents
+  featuresJson  String  // JSON string of features
+  maxLeads      Int?    // Monthly lead limit, null = unlimited
+  priority      Int     @default(0) // Search priority score
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  entitlements Entitlement[]
+
+  @@map("plans")
+}
+
+model Entitlement {
+  id                 String    @id @default(cuid())
+  advisorId          String
+  planId             String
+  active             Boolean   @default(true)
+  renewsAt           DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+  stripeSubscriptionId String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relationships
+  advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+  plan    Plan    @relation(fields: [planId], references: [id])
+
+  @@map("entitlements")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String   // Event type: profile_viewed, lead_submitted, etc.
+  payloadJson String   // JSON data for the event
+  userId      String?  // User who triggered the event
+  advisorId   String?  // Advisor related to the event
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  user    User?    @relation(fields: [userId], references: [id])
+  advisor Advisor? @relation(fields: [advisorId], references: [id])
+
+  @@map("events")
+}
+
+model ModerationQueue {
+  id          String    @id @default(cuid())
+  type        String    // review, profile, lead
+  refId       String    // ID of the item being moderated
+  status      String    @default("pending") // pending, approved, rejected
+  notes       String?
+  moderatorId String?   // User ID of the moderator
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  moderator User? @relation(fields: [moderatorId], references: [id])
+
+  @@map("moderation_queue")
 }

@@ -73,19 +73,33 @@ async function main() {
     },
   })
 
-  // Create sample advisors
+  // Create sample advisors with new required fields
   const advisor1 = await prisma.advisor.create({
     data: {
+      slug: 'mike-johnson-hockey-advisor',
       name: 'Mike Johnson',
+      headshot: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
+      city: 'Boston',
+      province: 'Massachusetts',
+      country: 'United States',
       email: 'mike.johnson@hockeyadvice.com',
       phone: '(555) 123-4567',
-      bio: 'Former NHL player with 15 years of experience helping young athletes reach their potential. Specialized in skill development and college recruitment.',
+      bio: 'Former NHL player with 15 years of experience helping young athletes reach their potential. Specialized in skill development and college recruitment. Played 8 seasons in the NHL before transitioning to player development.',
+      website: 'https://mikejohnsonhockey.com',
+      socials: JSON.stringify({
+        linkedin: 'https://linkedin.com/in/mikejohnsonhockey',
+        twitter: 'https://twitter.com/mikejhockey',
+        instagram: 'https://instagram.com/mikejohnsonhockey'
+      }),
       specialties: JSON.stringify(['Skill Development', 'College Recruitment', 'Mental Training']),
+      levels: JSON.stringify(['youth', 'junior', 'college']),
+      verified: true,
+      featuredUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // Featured for 90 days
+      completeness: 95,
+      responseTimeMs: 7200000, // 2 hours response time
       yearsExperience: 15,
       certifications: JSON.stringify(['USA Hockey Certified', 'Hockey Canada Certified', 'NCHC Recruiting Specialist']),
-      location: 'Boston, MA',
-      website: 'https://mikejohnsonhockey.com',
-      verified: true,
+      location: 'Boston, MA', // Keep for backward compatibility
       rating: 4.8,
       reviewCount: 23,
       subscription: {
@@ -100,15 +114,28 @@ async function main() {
 
   const advisor2 = await prisma.advisor.create({
     data: {
+      slug: 'sarah-mitchell-hockey-mentor',
       name: 'Sarah Mitchell',
+      headshot: 'https://images.unsplash.com/photo-1494790108755-2616c9eab6ae?w=400&h=400&fit=crop&crop=face',
+      city: 'Minneapolis',
+      province: 'Minnesota',
+      country: 'United States',
       email: 'sarah@hockeymentoring.com',
       phone: '(555) 234-5678',
-      bio: 'Youth hockey development specialist with focus on building confidence and fundamental skills in teenage players.',
+      bio: 'Youth hockey development specialist with focus on building confidence and fundamental skills in teenage players. Former Division I player who understands the mental game.',
+      website: 'https://sarahmitchellhockey.com',
+      socials: JSON.stringify({
+        linkedin: 'https://linkedin.com/in/sarahmitchellhockey',
+        instagram: 'https://instagram.com/sarahmentorshockey'
+      }),
       specialties: JSON.stringify(['Youth Development', 'Confidence Building', 'Fundamental Skills']),
+      levels: JSON.stringify(['youth', 'junior']),
+      verified: true,
+      completeness: 85,
+      responseTimeMs: 10800000, // 3 hours response time
       yearsExperience: 8,
       certifications: JSON.stringify(['USA Hockey Level 4', 'Mental Performance Coaching']),
-      location: 'Minneapolis, MN',
-      verified: true,
+      location: 'Minneapolis, MN', // Keep for backward compatibility
       rating: 4.9,
       reviewCount: 18,
       subscription: {
@@ -193,7 +220,229 @@ async function main() {
     }
   })
 
-  console.log('Database seeded successfully!')
+  // Create new Plan models (aligned with development standards)
+  const newBasicPlan = await prisma.plan.create({
+    data: {
+      name: 'basic',
+      priceMonth: 4999, // $49.99 in cents
+      priceYear: 49999,  // $499.99 in cents
+      featuresJson: JSON.stringify([
+        'Basic directory listing',
+        'Contact information display',
+        'Up to 5 leads per month',
+        'Email notifications'
+      ]),
+      maxLeads: 5,
+      priority: 1
+    }
+  })
+
+  const newFeaturedPlan = await prisma.plan.create({
+    data: {
+      name: 'featured',
+      priceMonth: 9999, // $99.99 in cents
+      priceYear: 99999,  // $999.99 in cents
+      featuresJson: JSON.stringify([
+        'Featured directory listing',
+        'Priority placement in search',
+        'Enhanced profile with photos',
+        'Up to 20 leads per month',
+        'SMS and email notifications'
+      ]),
+      maxLeads: 20,
+      priority: 5
+    }
+  })
+
+  const newPremiumPlan = await prisma.plan.create({
+    data: {
+      name: 'premium',
+      priceMonth: 19999, // $199.99 in cents
+      priceYear: 199999,  // $1999.99 in cents
+      featuresJson: JSON.stringify([
+        'Premium directory listing',
+        'Top placement in all searches',
+        'Full multimedia profile',
+        'Unlimited leads',
+        'Priority customer support',
+        'Advanced analytics dashboard'
+      ]),
+      maxLeads: null, // Unlimited
+      priority: 10
+    }
+  })
+
+  // Create sample users
+  const adminUser = await prisma.user.create({
+    data: {
+      email: 'admin@hockeydirectory.com',
+      role: 'admin'
+    }
+  })
+
+  const advisorUser1 = await prisma.user.create({
+    data: {
+      email: 'mike.johnson@hockeyadvice.com',
+      role: 'advisor',
+      advisorId: advisor1.id,
+      lastLogin: new Date()
+    }
+  })
+
+  const parentUser = await prisma.user.create({
+    data: {
+      email: 'parent@example.com',
+      role: 'parent'
+    }
+  })
+
+  // Create sample entitlements for the new advisors
+  await prisma.entitlement.create({
+    data: {
+      advisorId: advisor1.id,
+      planId: newFeaturedPlan.id,
+      active: true,
+      renewsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Renews in 30 days
+      stripeSubscriptionId: 'sub_featured_example_123'
+    }
+  })
+
+  await prisma.entitlement.create({
+    data: {
+      advisorId: advisor2.id,
+      planId: newBasicPlan.id,
+      active: true,
+      renewsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      stripeSubscriptionId: 'sub_basic_example_456'
+    }
+  })
+
+  // Create sample leads
+  const lead1 = await prisma.lead.create({
+    data: {
+      advisorId: advisor1.id,
+      parentEmail: 'parent1@example.com',
+      parentPhone: '(555) 987-6543',
+      parentName: 'Jennifer Smith',
+      playerAge: 14,
+      message: 'Hi Mike, my son is looking to improve his skating and puck handling skills. He plays AA hockey and is interested in potentially playing at the prep school level. Would love to discuss your training programs.',
+      status: 'new',
+      source: 'website'
+    }
+  })
+
+  const lead2 = await prisma.lead.create({
+    data: {
+      advisorId: advisor2.id,
+      parentEmail: 'parent2@example.com',
+      parentName: 'David Wilson',
+      playerAge: 13,
+      message: 'Hello Sarah, we heard great things about your confidence-building approach. Our daughter is struggling with game-time nerves and could use some mental coaching. Are you taking new clients?',
+      status: 'contacted',
+      source: 'referral'
+    }
+  })
+
+  // Create sample reviews
+  await prisma.review.create({
+    data: {
+      advisorId: advisor1.id,
+      rating: 5,
+      title: 'Excellent guidance for college prep',
+      body: 'Mike provided outstanding guidance throughout my son\'s college recruitment process. His connections and expertise were invaluable. Highly recommend!',
+      authorName: 'Tom Henderson',
+      status: 'approved'
+    }
+  })
+
+  await prisma.review.create({
+    data: {
+      advisorId: advisor1.id,
+      rating: 4,
+      title: 'Great skill development program',
+      body: 'The training program really helped improve my daughter\'s skating speed and stick handling. Saw noticeable improvement within 6 weeks.',
+      authorName: 'Lisa Chen',
+      status: 'approved'
+    }
+  })
+
+  await prisma.review.create({
+    data: {
+      advisorId: advisor2.id,
+      rating: 5,
+      title: 'Amazing confidence coach',
+      body: 'Sarah helped my son overcome his fear of contact and become a more confident player. Her approach is patient and effective.',
+      authorName: 'Mike Rodriguez',
+      status: 'approved'
+    }
+  })
+
+  // Create sample events (analytics tracking)
+  await prisma.event.create({
+    data: {
+      name: 'profile_viewed',
+      payloadJson: JSON.stringify({
+        advisorId: advisor1.id,
+        source: 'search_results',
+        userType: 'parent'
+      }),
+      userId: parentUser.id,
+      advisorId: advisor1.id,
+      ipAddress: '192.168.1.100',
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+  })
+
+  await prisma.event.create({
+    data: {
+      name: 'lead_submitted',
+      payloadJson: JSON.stringify({
+        leadId: lead1.id,
+        advisorId: advisor1.id,
+        parentEmail: 'parent1@example.com',
+        source: 'website'
+      }),
+      userId: parentUser.id,
+      advisorId: advisor1.id,
+      ipAddress: '192.168.1.100'
+    }
+  })
+
+  // Create sample moderation queue entries
+  await prisma.moderationQueue.create({
+    data: {
+      type: 'review',
+      refId: 'pending-review-123',
+      status: 'pending',
+      notes: 'Review contains potential spam content - needs manual verification'
+    }
+  })
+
+  await prisma.moderationQueue.create({
+    data: {
+      type: 'profile',
+      refId: advisor2.id,
+      status: 'approved',
+      notes: 'Profile verified - advisor credentials confirmed',
+      moderatorId: adminUser.id
+    }
+  })
+
+  console.log('Database seeded successfully with enhanced development data!')
+  console.log('Created:')
+  console.log('- 3 Subscription Plans (old model)')
+  console.log('- 3 Plans (new model)')
+  console.log('- 2 Advisors with full profile data')
+  console.log('- 1 Coach')
+  console.log('- 1 Tournament')
+  console.log('- 1 Prep School')
+  console.log('- 1 Arena')
+  console.log('- 3 Users (admin, advisor, parent)')
+  console.log('- 2 Entitlements')
+  console.log('- 2 Leads')
+  console.log('- 3 Reviews')
+  console.log('- 2 Events')
+  console.log('- 2 Moderation Queue entries')
 }
 
 main()
