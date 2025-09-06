@@ -1,0 +1,228 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Directory Entities
+
+model Advisor {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  bio             String?
+  specialties     String? // JSON string of specialties array
+  yearsExperience Int?
+  certifications  String? // JSON string of certifications array
+  location        String
+  website         String?
+  linkedIn        String?
+  imageUrl        String?
+  verified        Boolean  @default(false)
+  rating          Float?   @default(0)
+  reviewCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Business relationships
+  subscription AdvisorSubscription?
+  leads        Lead[]
+  payments     Payment[]
+  reviews      Review[]
+
+  @@map("advisors")
+}
+
+model Coach {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  bio             String?
+  coachingLevel   String   // Youth, Junior, Professional, etc.
+  yearsExperience Int?
+  certifications  String? // JSON string array
+  location        String
+  teamAffiliation String?
+  imageUrl        String?
+  verified        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("coaches")
+}
+
+model Tournament {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  location      String
+  startDate     DateTime
+  endDate       DateTime
+  ageGroups     String? // JSON string of age groups array
+  divisions     String? // JSON string of divisions array
+  entryFee      Float?
+  maxTeams      Int?
+  contactEmail  String
+  contactPhone  String?
+  website       String?
+  registrationDeadline DateTime?
+  status        String   @default("upcoming") // upcoming, ongoing, completed, cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("tournaments")
+}
+
+model PrepSchool {
+  id           String   @id @default(cuid())
+  name         String
+  location     String
+  address      String?
+  website      String?
+  phone        String?
+  email        String?
+  description  String?
+  tuitionRange String? // "10000-20000"
+  grades       String? // JSON string array
+  hockeyProgram String? // Description of hockey program
+  facilities   String? // JSON string array
+  accreditation String?
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("prep_schools")
+}
+
+model Arena {
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  address     String
+  phone       String?
+  website     String?
+  email       String?
+  description String?
+  facilities  String? // JSON string: ice rinks, locker rooms, etc.
+  iceSheets   Int?
+  publicSkate Boolean  @default(false)
+  hockeyPrograms Boolean @default(false)
+  rentalAvailable Boolean @default(false)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("arenas")
+}
+
+// Business Entities
+
+model SubscriptionPlan {
+  id          String  @id @default(cuid())
+  name        String  @unique // "basic", "featured", "premium"
+  displayName String  // "Basic Listing", "Featured Listing", "Premium Listing"
+  description String?
+  monthlyPrice Float
+  yearlyPrice  Float?
+  features    String? // JSON string of features array
+  maxLeads    Int?     // Maximum leads per month
+  featured    Boolean  @default(false)
+  priority    Int      @default(0) // Higher number = higher priority in listings
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  subscriptions AdvisorSubscription[]
+
+  @@map("subscription_plans")
+}
+
+model AdvisorSubscription {
+  id          String    @id @default(cuid())
+  advisorId   String    @unique
+  planId      String
+  status      String    @default("active") // active, cancelled, expired, suspended
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  autoRenew   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  advisor Advisor          @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+  plan    SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@map("advisor_subscriptions")
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  advisorId   String
+  parentName  String
+  parentEmail String
+  parentPhone String?
+  playerName  String?
+  playerAge   Int?
+  location    String?
+  message     String?
+  source      String   @default("website") // website, referral, etc.
+  status      String   @default("new") // new, contacted, qualified, converted, closed
+  leadValue   Float?   // Estimated value of the lead
+  conversionDate DateTime?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+
+  @@map("leads")
+}
+
+model Payment {
+  id           String    @id @default(cuid())
+  advisorId    String
+  type         String    // "subscription", "commission", "featured_listing"
+  amount       Float
+  currency     String    @default("USD")
+  status       String    @default("pending") // pending, completed, failed, refunded
+  stripePaymentId String?
+  description  String?
+  leadId       String?   // If this is a commission payment
+  dueDate      DateTime?
+  paidDate     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relationships
+  advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  advisorId String
+  parentName String
+  rating    Int      // 1-5 stars
+  title     String?
+  comment   String?
+  verified  Boolean  @default(false)
+  helpful   Int      @default(0) // Helpful votes
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+
+  @@map("reviews_ratings")
+}
