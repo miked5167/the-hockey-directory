@@ -1,3 +1,4 @@
+import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -7,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { Heart, GitCompare } from "lucide-react"
 import { useFavorites } from "@/hooks/use-favorites"
 import { useAdvisorComparison } from "@/hooks/use-advisor-comparison"
+import { ContactModal } from "@/components/leads/contact-modal"
 import type { Advisor } from "@prisma/client"
 
 interface AdvisorCardProps {
@@ -46,6 +48,7 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
   const isFeatured = layout === "featured"
   const { isFavorited, toggleFavorite } = useFavorites()
   const { toggleComparison, isInComparison } = useAdvisorComparison()
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   
   const averageRating = advisor.reviews?.length 
     ? advisor.reviews.reduce((acc, r) => acc + r.rating, 0) / advisor.reviews.length
@@ -239,6 +242,7 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
           </Button>
           <Button 
             size="sm" 
+            onClick={() => setIsContactModalOpen(true)}
             className={cn(
               "flex-1",
               isPremium ? "bg-purple-600 hover:bg-purple-700" :
@@ -250,6 +254,14 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
           </Button>
         </div>
       </CardFooter>
+      
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        advisorId={advisor.id}
+        advisorName={advisor.name}
+      />
     </Card>
   )
 }
