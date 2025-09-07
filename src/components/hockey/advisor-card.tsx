@@ -1,5 +1,8 @@
+"use client"
+
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { VerificationBadge, PremiumBadge, FeaturedBadge } from "@/components/ui/badge"
@@ -61,11 +64,11 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
     e.stopPropagation()
     toggleFavorite({
       id: advisor.id,
-      name: advisor.fullName,
+      name: advisor.name,
       location: `${advisor.city}, ${advisor.province}`,
       specialties: advisor.specialties || '',
       rating: averageRating,
-      headshotUrl: advisor.headshotUrl
+      headshotUrl: advisor.headshot
     })
   }
 
@@ -152,13 +155,13 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
           {/* Advisor photo */}
           <div className="relative h-16 w-16 flex-shrink-0">
             <Image
-              src={advisor.headshotUrl || "/placeholder-avatar.jpg"}
-              alt={advisor.fullName}
+              src={advisor.headshot || "/placeholder-avatar.jpg"}
+              alt={advisor.name}
               fill
               className="rounded-full object-cover"
               sizes="64px"
             />
-            {advisor.isVerified && (
+            {advisor.verified && (
               <div className="absolute -bottom-1 -right-1">
                 <VerificationBadge />
               </div>
@@ -172,7 +175,7 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
               isPremium ? "text-purple-900" : isFeatured ? "text-amber-900" : "text-gray-900",
               "text-lg leading-6"
             )}>
-              <HighlightMatches text={advisor.fullName} searchQuery={searchQuery} />
+              <HighlightMatches text={advisor.name} searchQuery={searchQuery} />
             </h3>
             
             {averageRating > 0 && (
@@ -220,8 +223,8 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
 
         {/* Experience and key stats */}
         <div className="flex justify-between items-center text-xs text-muted-foreground">
-          {advisor.yearsOfExperience && (
-            <span>{advisor.yearsOfExperience} years experience</span>
+          {advisor.yearsExperience && (
+            <span>{advisor.yearsExperience} years experience</span>
           )}
           {advisor.responseTimeMs && (
             <span>
@@ -233,13 +236,15 @@ export function AdvisorCard({ advisor, layout, className, searchQuery = "" }: Ad
 
       <CardFooter className="pt-0">
         <div className="flex w-full gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1"
-          >
-            View Profile
-          </Button>
+          <Link href={`/advisors/${advisor.id}`} className="flex-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full"
+            >
+              View Profile
+            </Button>
+          </Link>
           <Button 
             size="sm" 
             onClick={() => setIsContactModalOpen(true)}

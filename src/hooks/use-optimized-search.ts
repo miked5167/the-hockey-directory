@@ -85,7 +85,7 @@ export function useOptimizedAdvisorSearch(
           location: advisor.location || '',
           rating: advisor.rating,
           experience: advisor.yearsExperience,
-          isVerified: advisor.isVerified || false,
+          isVerified: advisor.verified || false,
           isFeatured: advisor.subscription?.plan.name?.includes('Featured') || false,
           specialties: advisor.specialties ? JSON.parse(advisor.specialties) : []
         })

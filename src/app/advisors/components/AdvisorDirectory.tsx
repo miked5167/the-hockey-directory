@@ -6,7 +6,7 @@ import { useAdvisors } from '@/hooks/use-advisors'
 import { useOptimizedAdvisorSearch } from '@/hooks/use-optimized-search'
 import { AdvisorCard } from '@/components/hockey/advisor-card'
 import { SearchInput } from '@/components/hockey/search-input'
-import { Grid } from '@/components/hockey/grid'
+import { Grid } from '@/components/ui/grid'
 import { Button } from '@/components/ui/button'
 import { ContactAdvisorModal } from './ContactAdvisorModal'
 import { Filter, SortAsc, GitCompare, TrendingUp } from 'lucide-react'
@@ -90,7 +90,9 @@ export function AdvisorDirectory({
   }
 
   const { data: advisors = [], isLoading, error } = useAdvisors({
-    verified: true
+    verified: externalFilters?.verifiedOnly,
+    location: externalFilters?.location,
+    specialties: externalFilters?.selectedSpecialties
   })
 
   // Use optimized search with performance tracking

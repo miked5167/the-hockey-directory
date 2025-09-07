@@ -20,11 +20,10 @@ export async function getAdvisorsByPriority(
     ...(filters?.verified && { verified: filters.verified })
   }
 
-  // Add location filter if provided
+  // Add location filter if provided (SQLite case-insensitive search)
   if (filters?.location) {
     whereClause.location = {
-      contains: filters.location,
-      mode: 'insensitive'
+      contains: filters.location
     }
   }
 

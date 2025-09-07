@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get('q')
     const location = searchParams.get('location')
     const featured = searchParams.get('featured') === 'true'
+    const verified = searchParams.get('verified') === 'true'
     const minRating = searchParams.get('minRating')
     const specialties = searchParams.get('specialties')
     const limit = searchParams.get('limit')
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
       ...(location && { location }),
       ...(minRating && { minRating: parseFloat(minRating) }),
       ...(specialtyArray && { specialties: specialtyArray }),
-      verified: true // Always return verified advisors only
+      ...(verified && { verified: true })
     }
 
     let advisors

@@ -1,6 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { prisma } from '@/lib/database'
-import { getAdvisorsByPriority, getFeaturedAdvisors, searchAdvisorsWithPriority } from '@/lib/business'
 import type { AdvisorWithSubscriptionPlan } from '@/lib/business/featured-listings'
 
 // Query keys for React Query
@@ -20,7 +18,15 @@ export function useAdvisors(filters?: {
   return useQuery({
     queryKey: advisorKeys.search('', filters),
     queryFn: async (): Promise<AdvisorWithSubscriptionPlan[]> => {
-      return getAdvisorsByPriority(filters)
+      const params = new URLSearchParams()
+      if (filters?.location) params.set('location', filters.location)
+      if (filters?.specialties) params.set('specialties', filters.specialties.join(','))
+      if (filters?.verified) params.set('verified', 'true')
+      
+      const response = await fetch(`/api/advisors?${params}`)
+      if (!response.ok) throw new Error('Failed to fetch advisors')
+      const data = await response.json()
+      return data.advisors
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
@@ -31,7 +37,14 @@ export function useFeaturedAdvisors(limit?: number) {
   return useQuery({
     queryKey: advisorKeys.featured(),
     queryFn: async (): Promise<AdvisorWithSubscriptionPlan[]> => {
-      return getFeaturedAdvisors(limit)
+      const params = new URLSearchParams()
+      params.set('featured', 'true')
+      if (limit) params.set('limit', limit.toString())
+      
+      const response = await fetch(`/api/advisors?${params}`)
+      if (!response.ok) throw new Error('Failed to fetch featured advisors')
+      const data = await response.json()
+      return data.advisors
     },
     staleTime: 1000 * 60 * 10, // 10 minutes (featured listings change less frequently)
   })

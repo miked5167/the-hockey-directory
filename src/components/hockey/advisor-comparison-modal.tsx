@@ -107,13 +107,13 @@ export function AdvisorComparisonModal({
                 <div className="flex items-center gap-3 mb-4">
                   <div className="relative h-12 w-12 flex-shrink-0">
                     <Image
-                      src={advisor.headshotUrl || "/placeholder-avatar.jpg"}
+                      src={advisor.headshot || "/placeholder-avatar.jpg"}
                       alt={advisor.name}
                       fill
                       className="rounded-full object-cover"
                       sizes="48px"
                     />
-                    {advisor.isVerified && (
+                    {advisor.verified && (
                       <div className="absolute -bottom-1 -right-1">
                         <VerificationBadge />
                       </div>

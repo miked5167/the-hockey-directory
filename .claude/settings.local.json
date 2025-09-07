@@ -14,7 +14,9 @@
       "Bash(node:*)",
       "Bash(del test-db-connection.js)",
       "Bash(timeout 5 npx prisma studio --port 5555 --browser=none)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(curl:*)",
+      "Bash(time curl:*)"
     ],
     "deny": [],
     "ask": []

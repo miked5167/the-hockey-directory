@@ -1,6 +1,6 @@
 import { Hero } from "@/components/hockey/hero"
 import { AdvisorCard } from "@/components/hockey/advisor-card"
-import { Grid } from "@/components/hockey/grid"
+import { Grid } from "@/components/ui/grid"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -70,16 +70,16 @@ const StarFilledIcon = ({ className }: { className?: string }) => (
 const featuredAdvisors = [
   {
     id: "1",
-    fullName: "Sarah Johnson",
+    name: "Sarah Johnson",
     slug: "sarah-johnson",
     bio: "Former NCAA Division I player with 8 years of coaching experience. Specializes in skill development and college recruitment guidance.",
     specialties: "Skill Development, College Prep, Mental Training",
     city: "Toronto",
     province: "ON",
     country: "CA",
-    yearsOfExperience: 8,
-    isVerified: true,
-    headshotUrl: "/placeholder-avatar.jpg",
+    yearsExperience: 8,
+    verified: true,
+    headshot: "/placeholder-avatar.svg",
     responseTimeMs: 3600000, // 1 hour
     completeness: 95,
     reviews: [
@@ -95,16 +95,16 @@ const featuredAdvisors = [
   },
   {
     id: "2",
-    fullName: "Mike Chen",
+    name: "Mike Chen",
     slug: "mike-chen",
     bio: "Professional goalie coach working with junior and college players. Former OHL goaltender with professional experience.",
     specialties: "Goalie Training, Technical Skills, Mental Training",
     city: "Calgary",
     province: "AB",
     country: "CA",
-    yearsOfExperience: 12,
-    isVerified: true,
-    headshotUrl: "/placeholder-avatar.jpg",
+    yearsExperience: 12,
+    verified: true,
+    headshot: "/placeholder-avatar.svg",
     responseTimeMs: 7200000, // 2 hours
     completeness: 98,
     reviews: [
@@ -121,16 +121,16 @@ const featuredAdvisors = [
   },
   {
     id: "3",
-    fullName: "Jennifer Davis",
+    name: "Jennifer Davis",
     slug: "jennifer-davis",
     bio: "Skills and conditioning coach with focus on youth development. Former university player turned development specialist.",
     specialties: "Youth Development, Conditioning, Skating",
     city: "Vancouver",
     province: "BC", 
     country: "CA",
-    yearsOfExperience: 6,
-    isVerified: true,
-    headshotUrl: "/placeholder-avatar.jpg",
+    yearsExperience: 6,
+    verified: true,
+    headshot: "/placeholder-avatar.svg",
     responseTimeMs: 1800000, // 30 minutes
     completeness: 90,
     reviews: [

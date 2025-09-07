@@ -351,6 +351,7 @@ async function main() {
       title: 'Excellent guidance for college prep',
       body: 'Mike provided outstanding guidance throughout my son\'s college recruitment process. His connections and expertise were invaluable. Highly recommend!',
       authorName: 'Tom Henderson',
+      parentName: 'Tom Henderson',
       status: 'approved'
     }
   })
@@ -362,6 +363,7 @@ async function main() {
       title: 'Great skill development program',
       body: 'The training program really helped improve my daughter\'s skating speed and stick handling. Saw noticeable improvement within 6 weeks.',
       authorName: 'Lisa Chen',
+      parentName: 'Lisa Chen',
       status: 'approved'
     }
   })
@@ -373,6 +375,7 @@ async function main() {
       title: 'Amazing confidence coach',
       body: 'Sarah helped my son overcome his fear of contact and become a more confident player. Her approach is patient and effective.',
       authorName: 'Mike Rodriguez',
+      parentName: 'Mike Rodriguez',
       status: 'approved'
     }
   })
